@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"cmdb_id": "os_022", "color": "#984ea3", "elapsed_time": 617.0, "id": "c6ae3171651bf0ce6551", "label": "os_022", "service_name": "osb_001", "shape": "dot", "size": 10}, {"cmdb_id": "os_022", "color": "#984ea3", "elapsed_time": 595.0, "id": "ae5ba171651bf0d86553", "label": "os_022", "service_name": "csf_001", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 592.0, "id": "d25be171651bf0da1840", "label": "docker_001", "service_name": "csf_001", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 4.0, "id": "d1083171651bf0de1842", "label": "docker_001", "service_name": "fly_remote_001", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 46.0, "id": "0c8df171651bf0e51848", "label": "docker_001", "service_name": "csf_002", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 41.0, "id": "6810b171651bf1191858", "label": "docker_001", "service_name": "csf_003", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 92.0, "id": "562b4171651bf17f1921", "label": "docker_001", "service_name": "csf_004", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 26.0, "id": "b29e8171651bf1e01948", "label": "docker_001", "service_name": "csf_005", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 67.0, "id": "dae0c171651bf1fc1989", "label": "docker_001", "service_name": "local_method_001", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 3.0, "id": "b388e171651bf23f1999", "label": "docker_001", "service_name": "local_method_002", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 4.0, "id": "d45e9171651bf2422004", "label": "docker_001", "service_name": "local_method_002", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 6.0, "id": "c5d9b171651bf2462016", "label": "docker_001", "service_name": "local_method_003", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 6.0, "id": "284fb171651bf24c2033", "label": "docker_001", "service_name": "local_method_004", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 6.0, "id": "be8ee171651bf2522052", "label": "docker_001", "service_name": "local_method_004", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 78.0, "id": "a8949171651bf2582068", "label": "docker_001", "service_name": "local_method_004", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 13.0, "id": "19802171651bf2a62092", "label": "docker_001", "service_name": "local_method_004", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 3.0, "id": "93513171651bf2b32111", "label": "docker_001", "service_name": "local_method_005", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 3.0, "id": "9946f171651bf2b62126", "label": "docker_001", "service_name": "local_method_006", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 4.0, "id": "e606a171651bf2b92136", "label": "docker_001", "service_name": "local_method_007", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 2.0, "id": "d88ee171651bf2bd2152", "label": "docker_001", "service_name": "local_method_006", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 86.0, "id": "6dfee171651bf2bf2162", "label": "docker_001", "service_name": "local_method_009", "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 11.0, "id": "63cce171651bf3182187", "label": "docker_001", "service_name": "local_method_010", "shape": "dot", "size": 10}, {"cmdb_id": "docker_007", "color": "#377eb8", "elapsed_time": 38.0, "id": "88fcc171651bf0ea2861", "label": "docker_007", "service_name": "csf_002", "shape": "dot", "size": 10}, {"cmdb_id": "docker_007", "color": "#377eb8", "elapsed_time": 7.0, "id": "520e1171651bf1032895", "label": "docker_007", "service_name": "local_method_011", "shape": "dot", "size": 10}, {"cmdb_id": "docker_007", "color": "#377eb8", "elapsed_time": 2.0, "id": "7b3bd171651bf1032898", "label": "docker_007", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_007", "color": "#377eb8", "elapsed_time": 3.0, "id": "f04e5171651bf1072901", "label": "docker_007", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_007", "color": "#377eb8", "elapsed_time": 35.0, "id": "37eb5171651bf11e2903", "label": "docker_007", "service_name": "csf_003", "shape": "dot", "size": 10}, {"cmdb_id": "docker_007", "color": "#377eb8", "elapsed_time": 9.0, "id": "3861b171651bf12a2916", "label": "docker_007", "service_name": "local_method_013", "shape": "dot", "size": 10}, {"cmdb_id": "docker_007", "color": "#377eb8", "elapsed_time": 4.0, "id": "be8c3171651bf1372929", "label": "docker_007", "service_name": "local_method_014", "shape": "dot", "size": 10}, {"cmdb_id": "docker_007", "color": "#377eb8", "elapsed_time": 3.0, "id": "e34c5171651bf12a2919", "label": "docker_007", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_007", "color": "#377eb8", "elapsed_time": 3.0, "id": "c8459171651bf1302925", "label": "docker_007", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_007", "color": "#377eb8", "elapsed_time": 2.0, "id": "358f9171651bf1392935", "label": "docker_007", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_008", "color": "#4daf4a", "elapsed_time": 21.0, "id": "dade8171651bf1847306", "label": "docker_008", "service_name": "csf_004", "shape": "dot", "size": 10}, {"cmdb_id": "docker_008", "color": "#4daf4a", "elapsed_time": 7.0, "id": "d1b95171651bf1887313", "label": "docker_008", "service_name": "local_method_015", "shape": "dot", "size": 10}, {"cmdb_id": "docker_008", "color": "#4daf4a", "elapsed_time": 4.0, "id": "ce28a171651bf1907326", "label": "docker_008", "service_name": "local_method_016", "shape": "dot", "size": 10}, {"cmdb_id": "docker_008", "color": "#4daf4a", "elapsed_time": 3.0, "id": "51b10171651bf1887316", "label": "docker_008", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_008", "color": "#4daf4a", "elapsed_time": 3.0, "id": "3258d171651bf18c7324", "label": "docker_008", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_008", "color": "#4daf4a", "elapsed_time": 2.0, "id": "6180e171651bf1927329", "label": "docker_008", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_007", "color": "#377eb8", "elapsed_time": 19.0, "id": "67f3e171651bf1e72951", "label": "docker_007", "service_name": "csf_005", "shape": "dot", "size": 10}, {"cmdb_id": "docker_007", "color": "#377eb8", "elapsed_time": 8.0, "id": "51c4c171651bf1ec2953", "label": "docker_007", "service_name": "local_method_017", "shape": "dot", "size": 10}, {"cmdb_id": "docker_007", "color": "#377eb8", "elapsed_time": 2.0, "id": "8573d171651bf1ed2956", "label": "docker_007", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_007", "color": "#377eb8", "elapsed_time": 3.0, "id": "e6427171651bf1f12959", "label": "docker_007", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 0.0, "id": "27be3171651bf1fc1992", "label": "docker_001", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 66.0, "id": "9cedf171651bf1fd1995", "label": "docker_001", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 0.0, "id": "f85be171651bf2412002", "label": "docker_001", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 0.0, "id": "fc9b6171651bf2452011", "label": "docker_001", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 1.0, "id": "0a7c4171651bf2492026", "label": "docker_001", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 0.0, "id": "10f50171651bf2522050", "label": "docker_001", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 0.0, "id": "27dbc171651bf2552060", "label": "docker_001", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 1.0, "id": "3109a171651bf25d2085", "label": "docker_001", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 1.0, "id": "7e9f2171651bf2b12109", "label": "docker_001", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 0.0, "id": "009cd171651bf2b52124", "label": "docker_001", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 0.0, "id": "0165e171651bf2b82132", "label": "docker_001", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 1.0, "id": "30b5e171651bf2bc2147", "label": "docker_001", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 1.0, "id": "32b79171651bf2be2157", "label": "docker_001", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 1.0, "id": "21cf1171651bf30c2174", "label": "docker_001", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 2.0, "id": "21bf5171651bf3192190", "label": "docker_001", "service_name": NaN, "shape": "dot", "size": 10}, {"cmdb_id": "docker_001", "color": "#e41a1c", "elapsed_time": 3.0, "id": "47e07171651bf3202201", "label": "docker_001", "service_name": NaN, "shape": "dot", "size": 10}]);
+                  edges = new vis.DataSet([{"call_type": "CSF", "color": "#e41a1c", "data_source_name": NaN, "from": "c6ae3171651bf0ce6551", "label": "CSF 10.0 ms", "milliseconds_from_root": 10.0, "service_name": "csf_001", "start_time": "2020-04-10 17:21:02.168", "to": "ae5ba171651bf0d86553", "width": 1}, {"call_type": "RemoteProcess", "color": "#ffff33", "data_source_name": NaN, "from": "ae5ba171651bf0d86553", "label": "RemoteProcess 12.0 ms", "milliseconds_from_root": 12.0, "service_name": "csf_001", "start_time": "2020-04-10 17:21:02.170", "to": "d25be171651bf0da1840", "width": 1}, {"call_type": "FlyRemote", "color": "#377eb8", "data_source_name": NaN, "from": "d25be171651bf0da1840", "label": "FlyRemote 16.0 ms", "milliseconds_from_root": 16.0, "service_name": "fly_remote_001", "start_time": "2020-04-10 17:21:02.174", "to": "d1083171651bf0de1842", "width": 1}, {"call_type": "CSF", "color": "#e41a1c", "data_source_name": NaN, "from": "d25be171651bf0da1840", "label": "CSF 24.0 ms", "milliseconds_from_root": 24.0, "service_name": "csf_002", "start_time": "2020-04-10 17:21:02.182", "to": "0c8df171651bf0e51848", "width": 1}, {"call_type": "CSF", "color": "#e41a1c", "data_source_name": NaN, "from": "d25be171651bf0da1840", "label": "CSF 75.0 ms", "milliseconds_from_root": 75.0, "service_name": "csf_003", "start_time": "2020-04-10 17:21:02.233", "to": "6810b171651bf1191858", "width": 1}, {"call_type": "CSF", "color": "#e41a1c", "data_source_name": NaN, "from": "d25be171651bf0da1840", "label": "CSF 178.0 ms", "milliseconds_from_root": 178.0, "service_name": "csf_004", "start_time": "2020-04-10 17:21:02.336", "to": "562b4171651bf17f1921", "width": 1}, {"call_type": "CSF", "color": "#e41a1c", "data_source_name": NaN, "from": "d25be171651bf0da1840", "label": "CSF 275.0 ms", "milliseconds_from_root": 275.0, "service_name": "csf_005", "start_time": "2020-04-10 17:21:02.433", "to": "b29e8171651bf1e01948", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_009", "from": "d25be171651bf0da1840", "label": "LOCAL 302.0 ms", "milliseconds_from_root": 302.0, "service_name": "local_method_001", "start_time": "2020-04-10 17:21:02.460", "to": "dae0c171651bf1fc1989", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_009", "from": "d25be171651bf0da1840", "label": "LOCAL 369.0 ms", "milliseconds_from_root": 369.0, "service_name": "local_method_002", "start_time": "2020-04-10 17:21:02.527", "to": "b388e171651bf23f1999", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_009", "from": "d25be171651bf0da1840", "label": "LOCAL 372.0 ms", "milliseconds_from_root": 372.0, "service_name": "local_method_002", "start_time": "2020-04-10 17:21:02.530", "to": "d45e9171651bf2422004", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_009", "from": "d25be171651bf0da1840", "label": "LOCAL 376.0 ms", "milliseconds_from_root": 376.0, "service_name": "local_method_003", "start_time": "2020-04-10 17:21:02.534", "to": "c5d9b171651bf2462016", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_009", "from": "d25be171651bf0da1840", "label": "LOCAL 382.0 ms", "milliseconds_from_root": 382.0, "service_name": "local_method_004", "start_time": "2020-04-10 17:21:02.540", "to": "284fb171651bf24c2033", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_009", "from": "d25be171651bf0da1840", "label": "LOCAL 388.0 ms", "milliseconds_from_root": 388.0, "service_name": "local_method_004", "start_time": "2020-04-10 17:21:02.546", "to": "be8ee171651bf2522052", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_009", "from": "d25be171651bf0da1840", "label": "LOCAL 394.0 ms", "milliseconds_from_root": 394.0, "service_name": "local_method_004", "start_time": "2020-04-10 17:21:02.552", "to": "a8949171651bf2582068", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_009", "from": "d25be171651bf0da1840", "label": "LOCAL 472.0 ms", "milliseconds_from_root": 472.0, "service_name": "local_method_004", "start_time": "2020-04-10 17:21:02.630", "to": "19802171651bf2a62092", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_009", "from": "d25be171651bf0da1840", "label": "LOCAL 485.0 ms", "milliseconds_from_root": 485.0, "service_name": "local_method_005", "start_time": "2020-04-10 17:21:02.643", "to": "93513171651bf2b32111", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_009", "from": "d25be171651bf0da1840", "label": "LOCAL 488.0 ms", "milliseconds_from_root": 488.0, "service_name": "local_method_006", "start_time": "2020-04-10 17:21:02.646", "to": "9946f171651bf2b62126", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_009", "from": "d25be171651bf0da1840", "label": "LOCAL 491.0 ms", "milliseconds_from_root": 491.0, "service_name": "local_method_007", "start_time": "2020-04-10 17:21:02.649", "to": "e606a171651bf2b92136", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_009", "from": "d25be171651bf0da1840", "label": "LOCAL 495.0 ms", "milliseconds_from_root": 495.0, "service_name": "local_method_006", "start_time": "2020-04-10 17:21:02.653", "to": "d88ee171651bf2bd2152", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_009", "from": "d25be171651bf0da1840", "label": "LOCAL 497.0 ms", "milliseconds_from_root": 497.0, "service_name": "local_method_009", "start_time": "2020-04-10 17:21:02.655", "to": "6dfee171651bf2bf2162", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_007", "from": "d25be171651bf0da1840", "label": "LOCAL 586.0 ms", "milliseconds_from_root": 586.0, "service_name": "local_method_010", "start_time": "2020-04-10 17:21:02.744", "to": "63cce171651bf3182187", "width": 1}, {"call_type": "RemoteProcess", "color": "#ffff33", "data_source_name": NaN, "from": "0c8df171651bf0e51848", "label": "RemoteProcess 28.0 ms", "milliseconds_from_root": 28.0, "service_name": "csf_002", "start_time": "2020-04-10 17:21:02.186", "to": "88fcc171651bf0ea2861", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_003", "from": "88fcc171651bf0ea2861", "label": "LOCAL 53.0 ms", "milliseconds_from_root": 53.0, "service_name": "local_method_011", "start_time": "2020-04-10 17:21:02.211", "to": "520e1171651bf1032895", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_003", "from": "520e1171651bf1032895", "label": "JDBC 53.0 ms", "milliseconds_from_root": 53.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.211", "to": "7b3bd171651bf1032898", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_003", "from": "520e1171651bf1032895", "label": "JDBC 57.0 ms", "milliseconds_from_root": 57.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.215", "to": "f04e5171651bf1072901", "width": 1}, {"call_type": "RemoteProcess", "color": "#ffff33", "data_source_name": NaN, "from": "6810b171651bf1191858", "label": "RemoteProcess 80.0 ms", "milliseconds_from_root": 80.0, "service_name": "csf_003", "start_time": "2020-04-10 17:21:02.238", "to": "37eb5171651bf11e2903", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_003", "from": "37eb5171651bf11e2903", "label": "LOCAL 92.0 ms", "milliseconds_from_root": 92.0, "service_name": "local_method_013", "start_time": "2020-04-10 17:21:02.250", "to": "3861b171651bf12a2916", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_003", "from": "37eb5171651bf11e2903", "label": "LOCAL 105.0 ms", "milliseconds_from_root": 105.0, "service_name": "local_method_014", "start_time": "2020-04-10 17:21:02.263", "to": "be8c3171651bf1372929", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_003", "from": "3861b171651bf12a2916", "label": "JDBC 92.0 ms", "milliseconds_from_root": 92.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.250", "to": "e34c5171651bf12a2919", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_003", "from": "3861b171651bf12a2916", "label": "JDBC 98.0 ms", "milliseconds_from_root": 98.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.256", "to": "c8459171651bf1302925", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_003", "from": "be8c3171651bf1372929", "label": "JDBC 107.0 ms", "milliseconds_from_root": 107.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.265", "to": "358f9171651bf1392935", "width": 1}, {"call_type": "RemoteProcess", "color": "#ffff33", "data_source_name": NaN, "from": "562b4171651bf17f1921", "label": "RemoteProcess 182.0 ms", "milliseconds_from_root": 182.0, "service_name": "csf_004", "start_time": "2020-04-10 17:21:02.340", "to": "dade8171651bf1847306", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_003", "from": "dade8171651bf1847306", "label": "LOCAL 186.0 ms", "milliseconds_from_root": 186.0, "service_name": "local_method_015", "start_time": "2020-04-10 17:21:02.344", "to": "d1b95171651bf1887313", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_003", "from": "dade8171651bf1847306", "label": "LOCAL 194.0 ms", "milliseconds_from_root": 194.0, "service_name": "local_method_016", "start_time": "2020-04-10 17:21:02.352", "to": "ce28a171651bf1907326", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_003", "from": "d1b95171651bf1887313", "label": "JDBC 186.0 ms", "milliseconds_from_root": 186.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.344", "to": "51b10171651bf1887316", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_003", "from": "d1b95171651bf1887313", "label": "JDBC 190.0 ms", "milliseconds_from_root": 190.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.348", "to": "3258d171651bf18c7324", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_003", "from": "ce28a171651bf1907326", "label": "JDBC 196.0 ms", "milliseconds_from_root": 196.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.354", "to": "6180e171651bf1927329", "width": 1}, {"call_type": "RemoteProcess", "color": "#ffff33", "data_source_name": NaN, "from": "b29e8171651bf1e01948", "label": "RemoteProcess 281.0 ms", "milliseconds_from_root": 281.0, "service_name": "csf_005", "start_time": "2020-04-10 17:21:02.439", "to": "67f3e171651bf1e72951", "width": 1}, {"call_type": "LOCAL", "color": "#984ea3", "data_source_name": "db_003", "from": "67f3e171651bf1e72951", "label": "LOCAL 286.0 ms", "milliseconds_from_root": 286.0, "service_name": "local_method_017", "start_time": "2020-04-10 17:21:02.444", "to": "51c4c171651bf1ec2953", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_003", "from": "51c4c171651bf1ec2953", "label": "JDBC 287.0 ms", "milliseconds_from_root": 287.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.445", "to": "8573d171651bf1ed2956", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_003", "from": "51c4c171651bf1ec2953", "label": "JDBC 291.0 ms", "milliseconds_from_root": 291.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.449", "to": "e6427171651bf1f12959", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_009", "from": "dae0c171651bf1fc1989", "label": "JDBC 302.0 ms", "milliseconds_from_root": 302.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.460", "to": "27be3171651bf1fc1992", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_009", "from": "dae0c171651bf1fc1989", "label": "JDBC 303.0 ms", "milliseconds_from_root": 303.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.461", "to": "9cedf171651bf1fd1995", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_009", "from": "b388e171651bf23f1999", "label": "JDBC 371.0 ms", "milliseconds_from_root": 371.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.529", "to": "f85be171651bf2412002", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_009", "from": "d45e9171651bf2422004", "label": "JDBC 375.0 ms", "milliseconds_from_root": 375.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.533", "to": "fc9b6171651bf2452011", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_009", "from": "c5d9b171651bf2462016", "label": "JDBC 379.0 ms", "milliseconds_from_root": 379.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.537", "to": "0a7c4171651bf2492026", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_009", "from": "284fb171651bf24c2033", "label": "JDBC 388.0 ms", "milliseconds_from_root": 388.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.546", "to": "10f50171651bf2522050", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_009", "from": "be8ee171651bf2522052", "label": "JDBC 391.0 ms", "milliseconds_from_root": 391.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.549", "to": "27dbc171651bf2552060", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_009", "from": "a8949171651bf2582068", "label": "JDBC 399.0 ms", "milliseconds_from_root": 399.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.557", "to": "3109a171651bf25d2085", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_009", "from": "19802171651bf2a62092", "label": "JDBC 483.0 ms", "milliseconds_from_root": 483.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.641", "to": "7e9f2171651bf2b12109", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_009", "from": "93513171651bf2b32111", "label": "JDBC 487.0 ms", "milliseconds_from_root": 487.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.645", "to": "009cd171651bf2b52124", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_009", "from": "9946f171651bf2b62126", "label": "JDBC 490.0 ms", "milliseconds_from_root": 490.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.648", "to": "0165e171651bf2b82132", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_009", "from": "e606a171651bf2b92136", "label": "JDBC 494.0 ms", "milliseconds_from_root": 494.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.652", "to": "30b5e171651bf2bc2147", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_009", "from": "d88ee171651bf2bd2152", "label": "JDBC 496.0 ms", "milliseconds_from_root": 496.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.654", "to": "32b79171651bf2be2157", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_009", "from": "6dfee171651bf2bf2162", "label": "JDBC 574.0 ms", "milliseconds_from_root": 574.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.732", "to": "21cf1171651bf30c2174", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_007", "from": "63cce171651bf3182187", "label": "JDBC 587.0 ms", "milliseconds_from_root": 587.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.745", "to": "21bf5171651bf3192190", "width": 1}, {"call_type": "JDBC", "color": "#4daf4a", "data_source_name": "db_007", "from": "63cce171651bf3182187", "label": "JDBC 594.0 ms", "milliseconds_from_root": 594.0, "service_name": NaN, "start_time": "2020-04-10 17:21:02.752", "to": "47e07171651bf3202201", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
