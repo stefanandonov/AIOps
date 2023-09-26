@@ -27,3 +27,4 @@ class ProcessedFile(StructuredNode):
     """Save processed files in database as back-up and easier recovery."""
     uid = UniqueIdProperty()
     name = StringProperty()
+    folder_name = StringProperty()

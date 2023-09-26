@@ -70,13 +70,13 @@ def generate_graph(parent_data, parent_node, parent_level, parent_stop_time):
 
 
 @db.transaction
-def file_to_db(folder_name, file_name):
+def file_to_db(path, folder_name, file_name):
     """Initialization and execution in transaction of the process saving JSON file to database.
     Open the file, create root node, generate graph starting from the root node, create ProcessedFile for recovery.
     Transaction prevents partial results saved in database.
     """
 
-    with open(folder_name + "/" + file_name) as read_file:
+    with open(path + "/" + file_name) as read_file:
         json_data = json.load(read_file)
 
     root_span_id = file_name.replace(".json", "")  # json_file name
@@ -89,12 +89,12 @@ def file_to_db(folder_name, file_name):
     # no info for root execution stop time
     generate_graph(parent_data=json_data, parent_node=root_node, parent_level=0, parent_stop_time=0)
 
-    pf = ProcessedFile(name=file_name)
+    pf = ProcessedFile(name=file_name, folder_name=folder_name)
     pf.save()
 
 
 def get_processed_files_hash():
-    return {pf.name for pf in ProcessedFile.nodes.all()}
+    return {pf.name+pf.folder_name for pf in ProcessedFile.nodes.all()}
 
 
 @db.transaction
