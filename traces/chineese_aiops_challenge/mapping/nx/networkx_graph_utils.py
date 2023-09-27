@@ -1,9 +1,8 @@
 from typing import Hashable
-import datetime
 import networkx as nx
-import pandas as pd
+import numpy as np
 
-from mapping.user_defined.graph import get_node_attributes, get_edge_attributes
+from mapping.user_defined.user_defined_graph_utils import get_node_attributes, get_edge_attributes
 from preprocessing.trace_utils import *
 
 '''
@@ -16,8 +15,8 @@ def build_initial_networkx_graph_from_trace(traces: pd.DataFrame) -> nx.DiGraph:
 
     graph = nx.from_pandas_edgelist(sort_traces_by_timestamp(traces), source='parent_span_id', target='span_id',
                                     create_using=nx.DiGraph(), edge_attr='call_type')
-    if graph.has_node('None'):
-        graph.remove_node('None')
+    if graph.has_node(np.nan):
+        graph.remove_node(np.nan)
 
     print("Successfully built initial nx graph!")
 
