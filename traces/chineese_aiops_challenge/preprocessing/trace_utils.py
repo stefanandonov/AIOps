@@ -1,12 +1,13 @@
+import pandas as pd
+
 from pandas.core.groupby import DataFrameGroupBy
 
-from preprocessing_utils import *
+from preprocessing.preprocessing_utils import *
 
-node_columns = ['cmdb_id', 'service_name', 'data_source_name', 'span_id']
-
-edge_columns = ['call_type', 'call_type_CSF', 'call_type_FlyRemote', 'call_type_JDBC',
-                'call_type_LOCAL', 'call_type_OSB', 'call_type_RemoteProcess', 'elapsed_time', 'success']
-
+edge_columns_encoded = ['call_type', 'call_type_CSF', 'call_type_FlyRemote', 'call_type_JDBC',
+                        'call_type_LOCAL', 'call_type_OSB', 'call_type_RemoteProcess', 'elapsed_time'
+                        ]
+categorical_columns_to_encode = ['call_type', 'host_name', 'data_source_name', 'service_name']
 
 def load_trace_data_from_date(date: str) -> dict[str, pd.DataFrame]:
     # date: {trace_type: trace_df}
@@ -39,8 +40,10 @@ def concat_traces_from_date(date: str) -> pd.DataFrame:
 def one_hot_encode_traces(df: pd.DataFrame) -> pd.DataFrame:
     print(f"Encoding concatenated trace dataframes...")
 
-    encoded = pd.get_dummies(df[['call_type']])
-    result = pd.concat([df, encoded], axis=1)
+    result = df.copy(deep=True)
+
+    for column in categorical_columns_to_encode:
+        result = pd.concat([result, pd.get_dummies(df[[column]])], axis=1)
 
     print(f"Successfully encoded concatenated trace dataframes...")
 
@@ -62,4 +65,4 @@ def sort_traces_by_timestamp(traces: pd.DataFrame) -> pd.DataFrame:
 
 
 def find_root_node_from_trace(traces: pd.DataFrame) -> pd.DataFrame:
-    return traces.loc[traces.parent_span_id == 'None']
+    return traces[traces['parent_span_id'].isna()]
