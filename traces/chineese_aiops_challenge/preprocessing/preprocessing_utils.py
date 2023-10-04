@@ -1,10 +1,12 @@
 import os
 import re
-from enum import Enum
-
 import pandas as pd
+from enum import Enum
+from dotenv import load_dotenv
+from settings import *
 
-DIR_PATH = r'E:\faks\Рударење на масивни податоци\AIOps挑战赛数据'
+load_dotenv()
+DIR_PATH = environment_variables_dict["DATASET_DIRECTORY_PATH"]
 DATE_PATTERN = r'[0-9]{4}_[0-9]{2}_[0-9]{2}'
 
 
@@ -83,8 +85,10 @@ def rename_columns(df: pd.DataFrame, src: DataSource) -> pd.DataFrame:
                                   'traceId': 'trace_id',
                                   'serviceName': 'service_name',
                                   'dsName': 'data_source_name',
-                                  'id' : 'span_id',
-                                  'pid': 'parent_span_id'})
+                                  'id': 'span_id',
+                                  'pid': 'parent_span_id',
+                                  "success": "service_is_not_anomalous",
+                                  'cmdb_id': 'host_name'})
 
 
 def set_index(df: pd.DataFrame, src: DataSource) -> pd.DataFrame:
