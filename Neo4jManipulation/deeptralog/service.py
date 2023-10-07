@@ -10,21 +10,20 @@ from Neo4jManipulation.model import ProcessedFile
 def file_to_db_deeptralog(folder_name, file_name):
     df = pd.read_csv(folder_name + file_name)
 
-    if len(df.columns) != 11:
+    if len(df.columns) != 11 or len(df) < 3:
         return
 
     print(len(df))
 
     df = encode(df, True)
 
-    root_df_list = df.loc[df['isParent'] == 1].values.tolist()
-    root_dto_list = [DeepTraLogDto.from_list(el) for el in root_df_list]
+    root_df_list = df.loc[df['isParent'] == 1]
+    root_dto_list = [DeepTraLogDto.from_dic(el.to_dict()) for _, el in root_df_list.iterrows()]
 
     for root_dto in root_dto_list:
         root_span_id = root_dto.span_id
 
         root_node = DeepTraLogTrace(
-            uuid=root_span_id,
             level=0,
             trace_id=root_dto.trace_id,
             execution_time=0,
@@ -41,22 +40,21 @@ def file_to_db_deeptralog(folder_name, file_name):
 
         root_node.save()
 
-        generate_deeptralog_graph(df, parent_node=root_node, parent_level=0, parent_stop_time=0)
+        generate_deeptralog_graph(df, parent_node=root_node, parent_uuid=root_span_id, parent_level=0, root_start_time=root_dto.start_time)
 
         pf = ProcessedFile(name=file_name)
         pf.save()
 
 
-def generate_deeptralog_graph(df, parent_node, parent_level, parent_stop_time):
-    children = df.loc[df['ParentSpan'] == parent_node.uuid].values.tolist()
-    children = [DeepTraLogDto.from_list(el) for el in children]
+def generate_deeptralog_graph(df, parent_node, parent_uuid, parent_level, root_start_time):
+    children = df.loc[df['ParentSpan'] == parent_uuid]
+    children = [DeepTraLogDto.from_dic(el.to_dict()) for _, el in children.iterrows()]
 
     for childDto in children:
 
-        delta_seconds = (childDto.end_time - childDto.start_time).total_seconds()
+        delta_seconds = (childDto.end_time - childDto.start_time)
 
         child_entity = DeepTraLogTrace(
-            uuid=childDto.span_id,
             level=parent_level + 1,
             trace_id=childDto.trace_id,
             execution_time=delta_seconds,
@@ -76,11 +74,14 @@ def generate_deeptralog_graph(df, parent_node, parent_level, parent_stop_time):
         if parent_level == 0:
             edge_value = None
         else:
-            edge_value = (childDto.start_time - parent_stop_time).total_seconds() * 1000
-            edge_value = abs(edge_value)
+            edge_value = childDto.start_time - root_start_time
 
-        child_entity.parent.connect(parent_node, edge_value)
-        generate_deeptralog_graph(df, child_entity, parent_level=parent_level + 1, parent_stop_time=childDto.end_time)
+        child_entity.parent.connect(parent_node, {'diff': edge_value})
+        generate_deeptralog_graph(df,
+                                  child_entity,
+                                  parent_uuid=childDto.span_id,
+                                  parent_level=parent_level + 1,
+                                  root_start_time=root_start_time)
 
 
 def encode(df, include_peer_and_service_content=False):
